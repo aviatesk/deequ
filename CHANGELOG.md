@@ -11,3 +11,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - relax suggested numeric types ([#2](https://github.com/aviatesk/deequ/pull/2))
   - when a column is not pure `Integral`/`Fractional`, now RetainTypeRule will suggest `.hasDataType(column, Numeric)` constraint, which accepts both type of numeric values
   - so that suggested checks don't fail on the original data from which they're generated
+- deequ is now built with spark-3.0.1 and scala-2.12.10 by default ([#4](https://github.com/aviatesk/deequ/pull/4))
