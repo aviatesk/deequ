@@ -6,5 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-- this fork is separated from <https://github.com/awslabs/deequ/commit/0c3d78d428881346f4b0c206c42c9b0d69ac163a>, as such all the changes below are diffs from the commit
-- add a constructor option to give custom category sorter for `CategoricalRangeRule` and `FractionalCategoricalRangeRule` ([#1])
+- this fork is separated from <https://github.com/awslabs/deequ/tree/7bbb7fa6d2500a0bb36919ca3682752c36b4a38e>, as such all the changes below are diffs from the commit
+- add a constructor option to give custom category sorter for `CategoricalRangeRule` and `FractionalCategoricalRangeRule` ([#1](https://github.com/aviatesk/deequ/pull/1))
+- relax suggested numeric types ([#2](https://github.com/aviatesk/deequ/pull/2))
+  - when a column is not pure `Integral`/`Fractional`, now RetainTypeRule will suggest `.hasDataType(column, Numeric)` constraint, which accepts both type of numeric values
+  - so that suggested checks don't fail on the original data from which they're generated
