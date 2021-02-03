@@ -14,6 +14,9 @@
  *
  */
 
+// TODO this end to end is horrible, find another way to test this
+// XXX why only `AnalysisBasedConstraint` shows their hints ?
+
 package com.amazon.deequ.suggestions
 
 import com.amazon.deequ.SparkContextSpec
@@ -218,7 +221,8 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att2\")"
+              |      "code_for_constraint": ".isComplete(\"att2\",
+              | hint = Some(\"'att2' is not null\"))"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(att1,None))",
@@ -228,7 +232,8 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att1\")"
+              |      "code_for_constraint": ".isComplete(\"att1\",
+              | hint = Some(\"'att1' is not null\"))"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(item,None))",
@@ -238,30 +243,33 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"item\")"
+              |      "code_for_constraint": ".isComplete(\"item\",
+              | hint = Some(\"'item' is not null\"))"
               |    },
               |    {
               |      "constraint_name": "AnalysisBasedConstraint(DataType(item,None),
-              |\u003cfunction1\u003e,Some(\u003cfunction1\u003e),None)",
+              |<function1>,Some(<function1>),
+              |Some('item' has data type Integral))",
               |      "column_name": "item",
               |      "current_value": "DataType: Integral",
-              |      "description": "'item' has type Integral",
+              |      "description": "'item' has data type Integral",
               |      "suggesting_rule": "RetainTypeRule()",
               |      "rule_description": "If we detect a non-string type, we suggest a type
               | constraint",
               |      "code_for_constraint": ".hasDataType(\"item\", ConstrainableDataTypes
-              |.Integral)"
+              |.Integral, hint = Some(\"'item' has data type Integral\"))"
               |    },
               |    {
-              |      "constraint_name": "ComplianceConstraint(Compliance(\u0027item\u0027 has no
-              | negative values,item \u003e\u003d 0,None))",
+              |      "constraint_name": "ComplianceConstraint(Compliance('item' has no
+              | negative values,item >= 0,None))",
               |      "column_name": "item",
               |      "current_value": "Minimum: 1.0",
-              |      "description": "\u0027item\u0027 has no negative values",
+              |      "description": "'item' has no negative values",
               |      "suggesting_rule": "NonNegativeNumbersRule()",
               |      "rule_description": "If we see only non-negative numbers in a column, we
               | suggest a corresponding constraint",
-              |      "code_for_constraint": ".isNonNegative(\"item\")"
+              |      "code_for_constraint": ".isNonNegative(\"item\",
+              | hint = Some(\"'item' has no negative values\"))"
               |    },
               |    {
               |      "constraint_name": "UniquenessConstraint(Uniqueness(List(item),None))",
@@ -272,7 +280,8 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "rule_description": "If the ratio of approximate num distinct values in a
               | column is close to the number of records (within the error of the HLL sketch),
               | we suggest a UNIQUE constraint",
-              |      "code_for_constraint": ".isUnique(\"item\")"
+              |      "code_for_constraint": ".isUnique(\"item\",
+              | hint = Some(\"'item' is unique\"))"
               |    }
               |  ]
               |}"""
@@ -296,70 +305,76 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "constraint_name": "CompletenessConstraint(Completeness(att2,None))",
               |      "column_name": "att2",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027att2\u0027 is not null",
+              |      "description": "'att2' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att2\")",
+              |      "code_for_constraint": ".isComplete(\"att2\",
+              | hint = Some(\"'att2' is not null\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(att1,None))",
               |      "column_name": "att1",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027att1\u0027 is not null",
+              |      "description": "'att1' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att1\")",
+              |      "code_for_constraint": ".isComplete(\"att1\",
+              | hint = Some(\"'att1' is not null\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(item,None))",
               |      "column_name": "item",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027item\u0027 is not null",
+              |      "description": "'item' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"item\")",
+              |      "code_for_constraint": ".isComplete(\"item\",
+              | hint = Some(\"'item' is not null\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    },
               |    {
               |      "constraint_name": "AnalysisBasedConstraint(DataType(item,None),
-              |\u003cfunction1\u003e,Some(\u003cfunction1\u003e),None)",
+              |<function1>,Some(<function1>),
+              |Some('item' has data type Integral))",
               |      "column_name": "item",
               |      "current_value": "DataType: Integral",
-              |      "description": "\u0027item\u0027 has type Integral",
+              |      "description": "'item' has data type Integral",
               |      "suggesting_rule": "RetainTypeRule()",
               |      "rule_description": "If we detect a non-string type, we suggest a type
               | constraint",
               |      "code_for_constraint": ".hasDataType(\"item\", ConstrainableDataTypes
-              |.Integral)",
+              |.Integral, hint = Some(\"'item' has data type Integral\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    },
               |    {
-              |      "constraint_name": "ComplianceConstraint(Compliance(\u0027item\u0027 has no
-              | negative values,item \u003e\u003d 0,None))",
+              |      "constraint_name": "ComplianceConstraint(Compliance('item' has no
+              | negative values,item >= 0,None))",
               |      "column_name": "item",
               |      "current_value": "Minimum: 1.0",
-              |      "description": "\u0027item\u0027 has no negative values",
+              |      "description": "'item' has no negative values",
               |      "suggesting_rule": "NonNegativeNumbersRule()",
               |      "rule_description": "If we see only non-negative numbers in a column, we
               | suggest a corresponding constraint",
-              |      "code_for_constraint": ".isNonNegative(\"item\")",
+              |      "code_for_constraint": ".isNonNegative(\"item\",
+              | hint = Some(\"'item' has no negative values\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    },
               |    {
               |      "constraint_name": "UniquenessConstraint(Uniqueness(List(item),None))",
               |      "column_name": "item",
               |      "current_value": "ApproxDistinctness: 1.0",
-              |      "description": "\u0027item\u0027 is unique",
+              |      "description": "'item' is unique",
               |      "suggesting_rule": "UniqueIfApproximatelyUniqueRule()",
               |      "rule_description": "If the ratio of approximate num distinct values in a
               | column is close to the number of records (within the error of the HLL sketch),
               | we suggest a UNIQUE constraint",
-              |      "code_for_constraint": ".isUnique(\"item\")",
+              |      "code_for_constraint": ".isUnique(\"item\",
+              | hint = Some(\"'item' is unique\"))",
               |      "constraint_result_on_test_set": "Failure"
               |    }
               |  ]
@@ -383,70 +398,76 @@ class ConstraintSuggestionResultTest extends WordSpec with Matchers with SparkCo
               |      "constraint_name": "CompletenessConstraint(Completeness(att2,None))",
               |      "column_name": "att2",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027att2\u0027 is not null",
+              |      "description": "'att2' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att2\")",
+              |      "code_for_constraint": ".isComplete(\"att2\",
+              | hint = Some(\"'att2' is not null\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(att1,None))",
               |      "column_name": "att1",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027att1\u0027 is not null",
+              |      "description": "'att1' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"att1\")",
+              |      "code_for_constraint": ".isComplete(\"att1\",
+              | hint = Some(\"'att1' is not null\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    },
               |    {
               |      "constraint_name": "CompletenessConstraint(Completeness(item,None))",
               |      "column_name": "item",
               |      "current_value": "Completeness: 1.0",
-              |      "description": "\u0027item\u0027 is not null",
+              |      "description": "'item' is not null",
               |      "suggesting_rule": "CompleteIfCompleteRule()",
               |      "rule_description": "If a column is complete in the sample, we suggest a NOT
               | NULL constraint",
-              |      "code_for_constraint": ".isComplete(\"item\")",
+              |      "code_for_constraint": ".isComplete(\"item\",
+              | hint = Some(\"'item' is not null\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    },
               |    {
               |      "constraint_name": "AnalysisBasedConstraint(DataType(item,None),
-              |\u003cfunction1\u003e,Some(\u003cfunction1\u003e),None)",
+              |<function1>,Some(<function1>),
+              |Some('item' has data type Integral))",
               |      "column_name": "item",
               |      "current_value": "DataType: Integral",
-              |      "description": "\u0027item\u0027 has type Integral",
+              |      "description": "'item' has data type Integral",
               |      "suggesting_rule": "RetainTypeRule()",
               |      "rule_description": "If we detect a non-string type, we suggest a type
               | constraint",
               |      "code_for_constraint": ".hasDataType(\"item\", ConstrainableDataTypes
-              |.Integral)",
+              |.Integral, hint = Some(\"'item' has data type Integral\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    },
               |    {
-              |      "constraint_name": "ComplianceConstraint(Compliance(\u0027item\u0027 has no
-              | negative values,item \u003e\u003d 0,None))",
+              |      "constraint_name": "ComplianceConstraint(Compliance('item' has no
+              | negative values,item >= 0,None))",
               |      "column_name": "item",
               |      "current_value": "Minimum: 1.0",
-              |      "description": "\u0027item\u0027 has no negative values",
+              |      "description": "'item' has no negative values",
               |      "suggesting_rule": "NonNegativeNumbersRule()",
               |      "rule_description": "If we see only non-negative numbers in a column, we
               | suggest a corresponding constraint",
-              |      "code_for_constraint": ".isNonNegative(\"item\")",
+              |      "code_for_constraint": ".isNonNegative(\"item\",
+              | hint = Some(\"'item' has no negative values\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    },
               |    {
               |      "constraint_name": "UniquenessConstraint(Uniqueness(List(item),None))",
               |      "column_name": "item",
               |      "current_value": "ApproxDistinctness: 1.0",
-              |      "description": "\u0027item\u0027 is unique",
+              |      "description": "'item' is unique",
               |      "suggesting_rule": "UniqueIfApproximatelyUniqueRule()",
               |      "rule_description": "If the ratio of approximate num distinct values in a
               | column is close to the number of records (within the error of the HLL sketch),
               | we suggest a UNIQUE constraint",
-              |      "code_for_constraint": ".isUnique(\"item\")",
+              |      "code_for_constraint": ".isUnique(\"item\",
+              | hint = Some(\"'item' is unique\"))",
               |      "constraint_result_on_test_set": "Unknown"
               |    }
               |  ]
