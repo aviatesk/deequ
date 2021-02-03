@@ -55,15 +55,20 @@ case class RetainTypeRule() extends ConstraintRule[ColumnProfile] {
       case DataTypeInstances.Boolean => ConstrainableDataTypes.Boolean
     }
 
-    val constraint = dataTypeConstraint(profile.column, typeToCheck, Check.IsOne)
+    val description = s"'${profile.column}' has data type ${typeToCheck}"
+    val constraint =
+      dataTypeConstraint(profile.column, typeToCheck, Check.IsOne, hint = Some(description))
+    val hintCode = ConstraintRule.genHintCode(description)
 
     ConstraintSuggestion(
       constraint,
       profile.column,
       "DataType: " + typeToCheck,
-      s"'${profile.column}' has type ${typeToCheck}",
+      description,
       this,
-      s""".hasDataType("${profile.column}", ConstrainableDataTypes.${typeToCheck})"""
+      s""".hasDataType("${profile.column}", """ +
+      s"""ConstrainableDataTypes.${typeToCheck}, """ +
+      s"""hint = ${hintCode})"""
     )
   }
 

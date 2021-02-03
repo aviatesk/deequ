@@ -66,7 +66,9 @@ case class CategoricalRangeRule(
 
     val description = s"'${profile.column}' has value range $categoriesSql"
     val columnCondition = s"`${profile.column}` IN ($categoriesSql)"
-    val constraint = complianceConstraint(description, columnCondition, Check.IsOne)
+    val constraint = complianceConstraint(description, columnCondition, Check.IsOne,
+      hint = Some(description))
+    val hintCode = ConstraintRule.genHintCode(description)
 
     ConstraintSuggestion(
       constraint,
@@ -74,7 +76,7 @@ case class CategoricalRangeRule(
       "Compliance: 1",
       description,
       this,
-      s""".isContainedIn("${profile.column}", Array($categoriesCode))"""
+      s""".isContainedIn("${profile.column}", Array($categoriesCode), hint = ${hintCode})"""
     )
   }
 
