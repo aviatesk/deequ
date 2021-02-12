@@ -626,6 +626,24 @@ class CheckTest extends AnyWordSpec with Matchers with SparkContextSpec with Fix
       assertEvaluatesTo(check, context, CheckStatus.Success)
     }
 
+    "allow regular expression pattern to match for null values" in withSparkSession { spark =>
+      import spark.implicits._
+
+      // XXX `id` is needed, otherwise scalastyle will complain due to the bug below
+      // https://github.com/scalastyle/scalastyle/issues/195
+      val df = Seq(
+        ("123", 1),
+        (null, 2)
+      ).toDF("nullable", "id")
+
+      val check = Check(CheckLevel.Error, "some description")
+        .hasPattern("nullable", "(|\\d{3,3})".r, _ == 0.5)
+
+      val context = runChecks(df, check)
+
+      assertEvaluatesTo(check, context, CheckStatus.Success)
+    }
+
     "fail on mixed data for E-Mail pattern with default assertion" in withSparkSession { session =>
       val col = "some"
       val df = dataFrameWithColumn(col, StringType, session, Row("someone@somewhere.org"),
