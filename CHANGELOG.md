@@ -14,3 +14,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - add hints to suggested constraint code, which should greatly improve its interpretability ([#5](https://github.com/aviatesk/deequ/pull/5))
 - parameterize `RetainCompletenessRule` so that users can specify completeness threshold and z-value at will ([#6](https://github.com/aviatesk/deequ/pull/6))
 - allow regex patterns to match for empty strings for `.hasPattern` constraint ([#8](https://github.com/aviatesk/deequ/pull/8))
+- add new `Info` check level ([#9](https://github.com/aviatesk/deequ/pull/9))

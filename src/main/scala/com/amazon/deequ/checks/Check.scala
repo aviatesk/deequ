@@ -30,7 +30,7 @@ import com.amazon.deequ.checks.ColumnCondition.{isEachNotNull, isAnyNotNull}
 import scala.util.matching.Regex
 
 object CheckLevel extends Enumeration {
-  val Error, Warning = Value
+  val Error, Warning, Info = Value
 }
 
 object CheckStatus extends Enumeration {
