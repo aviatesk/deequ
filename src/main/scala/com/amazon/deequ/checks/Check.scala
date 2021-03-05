@@ -30,11 +30,11 @@ import com.amazon.deequ.checks.ColumnCondition.{isEachNotNull, isAnyNotNull}
 import scala.util.matching.Regex
 
 object CheckLevel extends Enumeration {
-  val Error, Warning, Info = Value
+  val Info, Warning, Error = Value
 }
 
 object CheckStatus extends Enumeration {
-  val Success, Warning, Error = Value
+  val Success, Info, Warning, Error = Value
 }
 
 
@@ -1041,6 +1041,7 @@ case class Check(
     val checkStatus = (anyFailures, level) match {
       case (true, CheckLevel.Error) => CheckStatus.Error
       case (true, CheckLevel.Warning) => CheckStatus.Warning
+      case (true, CheckLevel.Info) => CheckStatus.Info
       case (_, _) => CheckStatus.Success
     }
 
